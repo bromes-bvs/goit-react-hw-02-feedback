@@ -1,7 +1,8 @@
 import { Component } from 'react';
-import StyledButton from './Button.styled';
-import Controls from './Controls.styled';
-import StyledTitle from './Title.styled';
+import FeedbackOptions from './FeedbackOptions/FeedbackOptions';
+import Notification from './Notification/Notofication';
+import Section from './Section/Section';
+import Statistics from './Statistics/Statistics';
 
 export class App extends Component {
   state = {
@@ -10,39 +11,47 @@ export class App extends Component {
     bad: 0,
   };
 
-  handelFeedback(type) {
+  handelFeedback = type => {
     this.setState({ [type]: this.state[type] + 1 });
-  }
+  };
+
+  countTotalFeedback = () => {
+    const { good, neutral, bad } = this.state;
+    return good + neutral + bad;
+  };
+  countPositiveFeedbackPercentage = () => {
+    const { good } = this.state;
+    const total = this.countTotalFeedback();
+    if (good !== 0 && total !== 0) {
+      return `${Math.round((good * 100) / total)}%`;
+    }
+    return `${0}%`;
+  };
 
   render() {
+    const { good, neutral, bad } = this.state;
+    const totalFeedback = this.countTotalFeedback();
+    const positiveFeedback = this.countPositiveFeedbackPercentage();
+
     return (
-      <section>
-        <StyledTitle>Please leave feedback</StyledTitle>
-        <Controls className="Feedback__controls">
-          <StyledButton
-            type="button"
-            onClick={() => this.handelFeedback('good')}
-          >
-            Good
-          </StyledButton>
-          <StyledButton
-            type="button"
-            onClick={() => this.handelFeedback('neutral')}
-          >
-            Neutral
-          </StyledButton>
-          <StyledButton
-            type="button"
-            onClick={() => this.handelFeedback('bad')}
-          >
-            Bad
-          </StyledButton>
-        </Controls>
-        <StyledTitle>Statistics</StyledTitle>
-        <p className="Feedback__item">God : {this.state.good}</p>
-        <p className="Feedback__item">Neutral : {this.state.neutral}</p>
-        <p className="Feedback__item">Bad : {this.state.bad}</p>
-      </section>
+      <>
+        <Section title="Please leave feedback">
+          <FeedbackOptions onLeaveFeedback={this.handelFeedback} />
+        </Section>
+        <Section title="Statistics">
+          {totalFeedback ? (
+            <Statistics
+              good={good}
+              neutral={neutral}
+              bad={bad}
+              total={totalFeedback}
+              positivePercentage={positiveFeedback}
+            ></Statistics>
+          ) : (
+            <Notification messege="There is no feedback" />
+          )}
+        </Section>
+      </>
     );
   }
 }
