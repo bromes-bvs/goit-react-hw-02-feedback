@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 import StyledButton from 'components/FeedbackOptions/Button.styled';
 import Controls from 'components/FeedbackOptions/Controls.styled';
 
@@ -16,3 +18,7 @@ export default function FeedbackOptions({ onLeaveFeedback }) {
     </Controls>
   );
 }
+
+FeedbackOptions.propTypes = {
+  onLeaveFeedback: PropTypes.func.isRequired,
+};
